@@ -1,4 +1,4 @@
-create table if not exists sites (
+create table if not exists urls (
     id serial primary key,
     url varchar(800) NOT NULL unique,
     site_id int NOT NULL references sites(id),

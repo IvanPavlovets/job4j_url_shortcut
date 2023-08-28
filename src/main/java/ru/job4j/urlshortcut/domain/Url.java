@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
 /**
  * Модель описывает ссылки добавленые в систему для кодировки.
  * Поле того, как пользователь зарегистрировал свой сайт он может отправлять
@@ -17,9 +19,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "urls")
 public class Url {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private int id;
     private String url;
+    @ManyToOne
     private Site site;
     private String code;
     private int total;

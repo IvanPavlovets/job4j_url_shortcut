@@ -4,11 +4,12 @@ import liquibase.repackaged.org.apache.commons.lang3.RandomStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.urlshortcut.domain.Url;
 import ru.job4j.urlshortcut.service.SiteService;
 import ru.job4j.urlshortcut.service.UrlService;
@@ -24,6 +25,14 @@ public class UrlController {
     private final SiteService siteService;
     private static final int CODE_LENGTH = 5;
 
+    /**
+     * Сохраняет URL адрес, привязоный к сайту,
+     * возвращает код URL адреса.
+     *
+     * @param json
+     * @param authentication
+     * @return ResponseEntity<Map<String, String>>
+     */
     @PostMapping("/convert")
     public ResponseEntity<Map<String, String>> convert(@RequestBody Map<String, String> json,
                                                        Authentication authentication) {
@@ -41,6 +50,25 @@ public class UrlController {
                 .body(new HashMap<>() {{
                     put("code", code);
                 }});
+    }
+
+    /**
+     * Возвращает статус 302 и ассоциированный адрес
+     * по закодированой ссылке, которую получили в
+     * /convert
+     * @param code
+     * @return ResponseEntity<String>
+     */
+    @GetMapping("/redirect/{code}")
+    public ResponseEntity<String> redirect(@PathVariable String code) {
+        Url url = urlService.findUrlByCode(code)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("HTTP CODE", "302 REDIRECT URL")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(new HashMap<>() {{
+                        put("URL", url.getUrl());
+                    }}.toString());
     }
 
 }

@@ -22,7 +22,7 @@ public class UrlService {
         return rsl;
     }
 
-    public Optional<Url> findUrlByLogin(String code) {
+    public Optional<Url> findUrlByCode(String code) {
         return this.urlRepository.findUrlByCode(code);
     }
 }

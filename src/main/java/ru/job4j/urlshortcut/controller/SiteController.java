@@ -38,21 +38,21 @@ public class SiteController {
      * }
      *
      * @param json
-     * @return
+     * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> registration(@RequestBody Map<String, String> json) {
         LOG.info("Registration site={}", json.toString());
         String login = json.get("site");
         String password = RandomStringUtils.random(CODE_LENGTH, true, true);
-        var findedSite = siteService.findSiteByLogin(login);
+        var foundSite = siteService.findSiteByLogin(login);
         var newSite = Site.of().login(login).password(password).registration(false).build();
-        if (findedSite.isEmpty()) {
+        if (foundSite.isEmpty()) {
             newSite.setRegistration(true);
             this.siteService.save(newSite);
         }
         return ResponseEntity.ok()
-                .body(new HashMap<String, String>() {{
+                .body(new HashMap<>() {{
                     put("registration", String.valueOf(newSite.isRegistration()));
                     put("login", newSite.getLogin());
                     put("password", password);

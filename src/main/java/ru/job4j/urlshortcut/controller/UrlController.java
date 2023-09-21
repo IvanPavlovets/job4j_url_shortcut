@@ -29,7 +29,7 @@ public class UrlController {
      * Сохраняет URL адрес, привязоный к сайту,
      * возвращает код URL адреса.
      *
-     * @param json
+     * @param json тело входящего запроса
      * @param authentication
      * @return ResponseEntity<Map<String, String>>
      */
@@ -40,11 +40,9 @@ public class UrlController {
         String url = json.get("url");
         String code = RandomStringUtils.random(CODE_LENGTH, true, true);
         String login = authentication.getName();
-        var findedSite = siteService.findSiteByLogin(login);
-        if (findedSite.isEmpty()) {
-            return (ResponseEntity<Map<String, String>>) ResponseEntity.notFound();
-        }
-        Url urlSite = Url.of().url(url).site(findedSite.get()).code(code).build();
+        var foundSite = siteService.findSiteByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Url urlSite = Url.of().url(url).site(foundSite).code(code).build();
         this.urlService.save(urlSite);
         return ResponseEntity.ok()
                 .body(new HashMap<>() {{
@@ -56,7 +54,7 @@ public class UrlController {
      * Возвращает статус 302 и ассоциированный адрес
      * по закодированой ссылке, которую получили в
      * /convert
-     * @param code
+     * @param code уникальный код ссылки
      * @return ResponseEntity<String>
      */
     @GetMapping("/redirect/{code}")
@@ -70,5 +68,21 @@ public class UrlController {
                         put("URL", url.getUrl());
                     }}.toString());
     }
+
+    /**
+     * В сервисе считается количество вызовов каждого адреса.
+     * Метод возвращает статистику по вызваемым ссылкам.
+     *
+     * @param authentication
+     * @return Iterable<Url>
+     */
+    @GetMapping("/statistic")
+    public Iterable<Url> statistic(Authentication authentication) {
+        String login = authentication.getName();
+        var foundSite = siteService.findSiteByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return urlService.getStatistic(foundSite);
+    }
+
 
 }

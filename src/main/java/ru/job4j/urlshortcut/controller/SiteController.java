@@ -22,7 +22,7 @@ public class SiteController {
     private static final int CODE_LENGTH = 5;
 
     /**
-     * Метод регистрации сайта.
+     * 1) Метод регистрации сайта.
      * Чтобы зарегистрировать сайт в систему
      * нужно отправить запрос POST по url:
      * /registration.
@@ -36,14 +36,17 @@ public class SiteController {
      *     "login": "job4444j.ru",
      *     "password": "FN7KZ"
      * }
-     *
-     * @param json
+     * 2) Ответ на http запрос, в виде простого ответа через метод
+     * ResponseEntity.ok()
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> registration(@RequestBody Map<String, String> json) {
         LOG.info("Registration site={}", json.toString());
         String login = json.get("site");
+        if (login == null) {
+            throw new NullPointerException("login mustn't be empty");
+        }
         String password = RandomStringUtils.random(CODE_LENGTH, true, true);
         var foundSite = siteService.findSiteByLogin(login);
         var newSite = Site.of().login(login).password(password).registration(false).build();

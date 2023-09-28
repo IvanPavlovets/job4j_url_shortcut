@@ -26,11 +26,12 @@ public class UrlController {
     private static final int CODE_LENGTH = 5;
 
     /**
-     * Сохраняет URL адрес, привязоный к сайту,
+     * 1) Сохраняет URL адрес, привязоный к сайту,
      * возвращает код URL адреса.
+     * 2) Ответ на http запрос, в виде простого ответа через метод
+     * ResponseEntity.ok() + body
      *
      * @param json тело входящего запроса
-     * @param authentication
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/convert")
@@ -38,10 +39,14 @@ public class UrlController {
                                                        Authentication authentication) {
         LOG.info("Registration url={}", json.toString());
         String url = json.get("url");
+        if (url == null) {
+            throw new NullPointerException("Url mustn't be empty");
+        }
         String code = RandomStringUtils.random(CODE_LENGTH, true, true);
         String login = authentication.getName();
         var foundSite = siteService.findSiteByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "For some reason the site was not found in the database."));
         Url urlSite = Url.of().url(url).site(foundSite).code(code).build();
         this.urlService.save(urlSite);
         return ResponseEntity.ok()
@@ -51,36 +56,46 @@ public class UrlController {
     }
 
     /**
-     * Возвращает статус 302 и ассоциированный адрес
+     * 1) Возвращает статус 302 и ассоциированный адрес
      * по закодированой ссылке, которую получили в
      * /convert
+     * 2) Ответ на http запрос, через строитель
+     * ResponseEntity.status().header().contentType()
+     * .contentLength().body();
+     *
      * @param code уникальный код ссылки
      * @return ResponseEntity<String>
      */
     @GetMapping("/redirect/{code}")
     public ResponseEntity<String> redirect(@PathVariable String code) {
+        if (code == null) {
+            throw new NullPointerException("code mustn't be empty");
+        }
         Url url = urlService.findUrlByCode(code)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Url is not found. Please, check unique code for url."));
+        var body = new HashMap<>() {{
+            put("URL", url.getUrl());
+        }}.toString();
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header("HTTP CODE", "302 REDIRECT URL")
                 .contentType(MediaType.TEXT_PLAIN)
-                .body(new HashMap<>() {{
-                        put("URL", url.getUrl());
-                    }}.toString());
+                .contentLength(body.length())
+                .body(body);
     }
 
     /**
      * В сервисе считается количество вызовов каждого адреса.
      * Метод возвращает статистику по вызваемым ссылкам.
      *
-     * @param authentication
      * @return Iterable<Url>
      */
     @GetMapping("/statistic")
     public Iterable<Url> statistic(Authentication authentication) {
         String login = authentication.getName();
         var foundSite = siteService.findSiteByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Site is not found. Please, check url for site."));
         return urlService.getStatistic(foundSite);
     }
 

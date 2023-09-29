@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.urlshortcut.domain.Url;
+import ru.job4j.urlshortcut.domain.UrlRecord;
 import ru.job4j.urlshortcut.service.SiteService;
 import ru.job4j.urlshortcut.service.UrlService;
 
@@ -31,15 +32,14 @@ public class UrlController {
      * 2) Ответ на http запрос, в виде простого ответа через метод
      * ResponseEntity.ok() + body
      *
-     * @param json тело входящего запроса
+     * @param record тело входящего запроса
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/convert")
-    public ResponseEntity<Map<String, String>> convert(@RequestBody Map<String, String> json,
+    public ResponseEntity<Map<String, String>> convert(@RequestBody UrlRecord record,
                                                        Authentication authentication) {
-        LOG.info("Registration url={}", json.toString());
-        String url = json.get("url");
-        if (url == null) {
+        LOG.info("Registration url={}", record.url());
+        if (record.url() == null) {
             throw new NullPointerException("Url mustn't be empty");
         }
         String code = RandomStringUtils.random(CODE_LENGTH, true, true);
@@ -47,7 +47,7 @@ public class UrlController {
         var foundSite = siteService.findSiteByLogin(login)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "For some reason the site was not found in the database."));
-        Url urlSite = Url.of().url(url).site(foundSite).code(code).build();
+        Url urlSite = Url.of().url(record.url()).site(foundSite).code(code).build();
         this.urlService.save(urlSite);
         return ResponseEntity.ok()
                 .body(new HashMap<>() {{
@@ -91,7 +91,7 @@ public class UrlController {
      * @return Iterable<Url>
      */
     @GetMapping("/statistic")
-    public Iterable<Url> statistic(Authentication authentication) {
+    public Iterable<UrlRecord> statistic(Authentication authentication) {
         String login = authentication.getName();
         var foundSite = siteService.findSiteByLogin(login)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,

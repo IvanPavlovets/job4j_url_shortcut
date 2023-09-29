@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.job4j.urlshortcut.domain.Site;
+import ru.job4j.urlshortcut.domain.SiteRecord;
 import ru.job4j.urlshortcut.service.SiteService;
 
 import java.util.HashMap;
@@ -41,15 +42,14 @@ public class SiteController {
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/registration")
-    public ResponseEntity<Map<String, String>> registration(@RequestBody Map<String, String> json) {
-        LOG.info("Registration site={}", json.toString());
-        String login = json.get("site");
-        if (login == null) {
+    public ResponseEntity<Map<String, String>> registration(@RequestBody SiteRecord record) {
+        LOG.info("Registration site={}", record.site());
+        if (record.site() == null) {
             throw new NullPointerException("login mustn't be empty");
         }
         String password = RandomStringUtils.random(CODE_LENGTH, true, true);
-        var foundSite = siteService.findSiteByLogin(login);
-        var newSite = Site.of().login(login).password(password).registration(false).build();
+        var foundSite = siteService.findSiteByLogin(record.site());
+        var newSite = Site.of().login(record.site()).password(password).registration(false).build();
         if (foundSite.isEmpty()) {
             newSite.setRegistration(true);
             this.siteService.save(newSite);

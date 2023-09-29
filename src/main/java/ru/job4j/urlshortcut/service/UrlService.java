@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.urlshortcut.domain.Site;
 import ru.job4j.urlshortcut.domain.Url;
+import ru.job4j.urlshortcut.domain.UrlRecord;
 import ru.job4j.urlshortcut.repository.UrlRepository;
 
 import java.util.List;
@@ -27,7 +28,6 @@ public class UrlService {
 
     /**
      * Возвращает ссылку по уникальному коду.
-     * @param code
      * @return Optional<Url>
      */
     public Optional<Url> findUrlByCode(String code) {
@@ -39,14 +39,21 @@ public class UrlService {
      * Возвращает список ссылок List<Url>,
      * показывающий статистику, вызваные ссылки, пользователя.
      *
-     * @param site
      * @return List<Url>
      */
-    public List<Url> getStatistic(Site site) {
-        List<Url> urls = new CopyOnWriteArrayList<>();
+    public List<UrlRecord> getStatistic(Site site) {
+        List<UrlRecord> urls = new CopyOnWriteArrayList<>();
         for (Url url : urlRepository.findAllBySite(site)) {
-            urls.add(url);
+            urls.add(getUrlRecord(url));
         }
         return urls;
+    }
+
+    /**
+     * Внутриний метод конвертации полей Url в UrlRecord.
+     * @return UrlRecord
+     */
+    private static UrlRecord getUrlRecord(Url url) {
+        return UrlRecord.of().url(url.getUrl()).total(url.getTotal()).build();
     }
 }

@@ -48,16 +48,12 @@ public class SiteController {
             throw new NullPointerException("login mustn't be empty");
         }
         String password = RandomStringUtils.random(CODE_LENGTH, true, true);
-        var foundSite = siteService.findSiteByLogin(record.site());
-        var newSite = Site.of().login(record.site()).password(password).registration(false).build();
-        if (foundSite.isEmpty()) {
-            newSite.setRegistration(true);
-            this.siteService.save(newSite);
-        }
+        var newSite = Site.of().login(record.site()).password(password).registration(true).build();
+        Site savedSite = this.siteService.save(newSite);
         return ResponseEntity.ok()
                 .body(new HashMap<>() {{
-                    put("registration", String.valueOf(newSite.isRegistration()));
-                    put("login", newSite.getLogin());
+                    put("registration", String.valueOf(savedSite.isRegistration()));
+                    put("login", savedSite.getLogin());
                     put("password", password);
                 }});
 

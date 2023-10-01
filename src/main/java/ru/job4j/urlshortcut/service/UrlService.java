@@ -1,6 +1,8 @@
 package ru.job4j.urlshortcut.service;
 
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.job4j.urlshortcut.domain.Site;
 import ru.job4j.urlshortcut.domain.Url;
@@ -14,6 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Service
 @AllArgsConstructor
 public class UrlService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UrlService.class.getSimpleName());
     private final UrlRepository urlRepository;
 
     public Optional<Url> save(Url url) {
@@ -22,6 +26,7 @@ public class UrlService {
             rsl = Optional.of(urlRepository.save(url));
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.info("The url = {} is already taken.", url.getUrl());
         }
         return rsl;
     }

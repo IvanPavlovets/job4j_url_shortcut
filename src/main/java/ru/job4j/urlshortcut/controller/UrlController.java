@@ -48,7 +48,13 @@ public class UrlController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "For some reason the site was not found in the database."));
         Url urlSite = Url.of().url(record.url()).site(foundSite).code(code).build();
-        this.urlService.save(urlSite);
+        if (this.urlService.save(urlSite).isEmpty()) {
+            return new ResponseEntity<>(new HashMap<>() {{
+                put("The url/code is already taken", record.url());
+            }},
+                    HttpStatus.CONFLICT
+            );
+        }
         return ResponseEntity.ok()
                 .body(new HashMap<>() {{
                     put("code", code);

@@ -3,6 +3,7 @@ package ru.job4j.urlshortcut.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Модель описывает ссылки добавленые в систему для кодировки.
@@ -24,6 +25,7 @@ public class Url {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
+    @NotBlank(message = "Url must be non empty")
     private String url;
     @ManyToOne
     private Site site;

@@ -15,6 +15,7 @@ import ru.job4j.urlshortcut.domain.UrlRecord;
 import ru.job4j.urlshortcut.service.SiteService;
 import ru.job4j.urlshortcut.service.UrlService;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class UrlController {
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/convert")
-    public ResponseEntity<Map<String, String>> convert(@RequestBody UrlRecord record,
+    public ResponseEntity<Map<String, String>> convert(@Valid @RequestBody UrlRecord record,
                                                        Authentication authentication) {
         LOG.info("Registration url={}", record.url());
         if (record.url() == null) {

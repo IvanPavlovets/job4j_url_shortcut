@@ -12,6 +12,7 @@ import ru.job4j.urlshortcut.domain.Site;
 import ru.job4j.urlshortcut.domain.SiteRecord;
 import ru.job4j.urlshortcut.service.SiteService;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,11 +43,8 @@ public class SiteController {
      * @return ResponseEntity<Map<String, String>>
      */
     @PostMapping("/registration")
-    public ResponseEntity<Map<String, String>> registration(@RequestBody SiteRecord record) {
+    public ResponseEntity<Map<String, String>> registration(@Valid @RequestBody SiteRecord record) {
         LOG.info("Registration site={}", record.site());
-        if (record.site() == null) {
-            throw new NullPointerException("login mustn't be empty");
-        }
         String password = RandomStringUtils.random(CODE_LENGTH, true, true);
         var newSite = Site.of().login(record.site()).password(password).registration(true).build();
         Site savedSite = this.siteService.save(newSite);

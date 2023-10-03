@@ -3,6 +3,7 @@ package ru.job4j.urlshortcut.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Модель описывает сайты регестрируемые в системе
@@ -21,7 +22,9 @@ public class Site {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
+    @NotBlank(message = "Login must be non empty")
     private String login;
+    @NotBlank(message = "Password must be non empty")
     private String password;
     private boolean registration;
 

@@ -29,6 +29,11 @@ public class UrlRepositoryTest {
         assertThat(urlRepository).isNotNull();
     }
 
+    /**
+     * Проверка метода findUrlByCode(),
+     * ссылка (url) не найдена
+     * так как не помешен в контекст
+     */
     @Test
     void whenFindUrlByCodeThenReturnEmpty() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -38,6 +43,12 @@ public class UrlRepositoryTest {
         assertThat(actual).isEmpty();
     }
 
+    /**
+     * проверка findUrlByCode().
+     * Url привязаный к сайту site1 найден
+     * методом findUrlByCode(),
+     * потомучто помещен в конекст
+     */
     @Test
     void whenFindUrlByCodeThenReturnUrl() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -48,6 +59,11 @@ public class UrlRepositoryTest {
         assertThat(actual).isEqualTo(Optional.of(url));
     }
 
+    /**
+     * К одному сайту (site1) привязали 2 url (url, url1)
+     * и поместили в конекст. Оби ссылки (url, url1)
+     * эквивалентны.
+     */
     @Test
     void whenSaveTwoUrlFindUrlByCodeThenReturnUrl1() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -60,6 +76,11 @@ public class UrlRepositoryTest {
         assertThat(actual).isEqualTo(Optional.of(url1));
     }
 
+    /**
+     * Проерка метода findAllBySite(site1).
+     * создали обьект site1 и поместили в контекст
+     * других обьектов в контексте нет.
+     */
     @Test
     void whenFindAllBySiteReturnEmpty() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -68,6 +89,10 @@ public class UrlRepositoryTest {
         assertThat(actual.iterator().hasNext()).isFalse();
     }
 
+    /**
+     * К вновь созданому обьекту site1 привязали две ссылки url, url1.
+     * Метод findAllBySite(site1) все их извлек.
+     */
     @Test
     void whenFindAllByReturnIteratorTwoUrl() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -82,6 +107,11 @@ public class UrlRepositoryTest {
         assertThat(iterator.next()).isEqualTo(url1);
     }
 
+    /**
+     * проверка updateUrlByTotal()
+     * url раз вызыван методом updateUrlByTotal()
+     * поле total в обьекте url увеличелось на 1
+     */
     @Test
     void whenUpdateUrlByTotalWhenTotalAddOne() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();
@@ -98,6 +128,10 @@ public class UrlRepositoryTest {
         assertThat(actual.get().getTotal()).isEqualTo(1);
     }
 
+    /**
+     * Два раза вызвали url updateUrlByTotal()
+     * поле total в обьекте url увеличелось на 2
+     */
     @Test
     void whenUpdateUrlByTotalWhenTotalAddTwo() {
         Site site1 = Site.of().login("login_site1").password("passwors_site1").registration(true).build();

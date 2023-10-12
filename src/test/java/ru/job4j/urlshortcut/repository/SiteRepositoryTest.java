@@ -29,6 +29,11 @@ public class SiteRepositoryTest {
         assertThat(siteRepository).isNotNull();
     }
 
+    /**
+     * Проверка метода findSiteByLogin()
+     * вновь созданый сайт не найден,
+     * так как не помешен в контекст
+     */
     @Test
     public void whenFindSiteByLoginThenReturnEmpty() {
         Site site = Site.of().login("job4j").password("password").registration(true).build();
@@ -36,6 +41,11 @@ public class SiteRepositoryTest {
         assertThat(actual).isEmpty();
     }
 
+    /**
+     * Проверка метода findSiteByLogin()
+     * вновь созданый сайт найден,
+     * потомучто помешен в контекст
+     */
     @Test
     public void whenFindSiteByLoginThenReturnLogin() {
         Site site = Site.of().login("job4j").password("password").registration(true).build();
@@ -44,6 +54,10 @@ public class SiteRepositoryTest {
         assertThat(actual).isEqualTo(Optional.of(site));
     }
 
+    /**
+     * проверка по не сопадению логина
+     * в аргументе метода findSiteByLogin()
+     */
     @Test
     public void whenFindSiteMoreLoginThenReturnEmpty() {
         Site site = Site.of().login("job4j").password("password").registration(true).build();
@@ -52,6 +66,9 @@ public class SiteRepositoryTest {
         assertThat(actual).isEmpty();
     }
 
+    /**
+     * Проверка эквивалентности обьектов помещеных в контекст
+     */
     @Test
     public void whenFindSiteLoginThenReturnSite() {
         Site site = Site.of().login("job4j").password("password").registration(true).build();

@@ -14,7 +14,6 @@ public interface UrlRepository extends CrudRepository<Url, Integer> {
 
     /**
      * Поиск сайта по коду
-     * @param code
      * @return Optional<Url>
      */
     Optional<Url> findUrlByCode(String code);
@@ -25,10 +24,10 @@ public interface UrlRepository extends CrudRepository<Url, Integer> {
      * Метод для увеличения счетчика статистики вызова каждого адреса.
      * Увеличение счетчика нужно сделать в базе данных, а не в Java.
      *
-     * @param code String код ссылки.
+     * @param link String ссылка обьекта Url.
      */
     @Transactional
     @Modifying
-    @Query("update Url u set u.total = u.total + 1 where u.code=:code")
-    void updateUrlByTotal(@Param("code") String code);
+    @Query("UPDATE Url u SET u.total = u.total + 1 WHERE u.url=:link")
+    void updateUrlByTotal(@Param("link") String link);
 }

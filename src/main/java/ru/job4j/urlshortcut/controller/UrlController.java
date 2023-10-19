@@ -40,9 +40,6 @@ public class UrlController {
     public ResponseEntity<Map<String, String>> convert(@Valid @RequestBody UrlRecord record,
                                                        Authentication authentication) {
         LOG.info("Registration url={}", record.url());
-        if (record.url() == null) {
-            throw new NullPointerException("Url mustn't be empty");
-        }
         String code = RandomStringUtils.random(CODE_LENGTH, true, true);
         String login = authentication.getName();
         var foundSite = siteService.findSiteByLogin(login)
@@ -81,6 +78,7 @@ public class UrlController {
         Url url = urlService.findUrlByCode(code)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Url is not found. Please, check unique code for url."));
+        urlService.increaseStatistic(url.getUrl());
         var body = new HashMap<>() {{
             put("URL", url.getUrl());
         }}.toString();

@@ -122,7 +122,7 @@ public class UrlRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        urlRepository.updateUrlByTotal(url.getCode());
+        urlRepository.updateUrlByTotal(url.getUrl());
         var actual = urlRepository.findUrlByCode(url.getCode());
 
         assertThat(actual.get().getTotal()).isEqualTo(1);
@@ -142,8 +142,8 @@ public class UrlRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        urlRepository.updateUrlByTotal(url.getCode());
-        urlRepository.updateUrlByTotal(url.getCode());
+        urlRepository.updateUrlByTotal(url.getUrl());
+        urlRepository.updateUrlByTotal(url.getUrl());
         var actual = urlRepository.findUrlByCode(url.getCode());
 
         assertThat(actual.get().getTotal()).isEqualTo(2);

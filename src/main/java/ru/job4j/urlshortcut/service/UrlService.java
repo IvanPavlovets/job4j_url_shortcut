@@ -36,8 +36,15 @@ public class UrlService {
      * @return Optional<Url>
      */
     public Optional<Url> findUrlByCode(String code) {
-        this.urlRepository.updateUrlByTotal(code);
         return this.urlRepository.findUrlByCode(code);
+    }
+
+    /**
+     * увеличивает счетчик статистики, поле total +1.
+     * @param link ссылка обьекта Url
+     */
+    public void increaseStatistic(String link) {
+        this.urlRepository.updateUrlByTotal(link);
     }
 
     /**

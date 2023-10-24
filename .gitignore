@@ -43,3 +43,5 @@ build/
 *.tar.gz
 *.rar
 
+# h2 datasource
+testdb.?.db

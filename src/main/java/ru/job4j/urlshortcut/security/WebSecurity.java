@@ -34,7 +34,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs",
                         "/swagger-resources/**",
                         "/swagger-ui.html",
-                        "/webjars/**" ,
+                        "/webjars/**",
                         /*Probably not needed*/ "/swagger.json")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()

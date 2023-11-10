@@ -8,10 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
 
 @SpringBootApplication
+@EnableSwagger2
 public class Job4jUrlShortcutApplication {
 	private static final Logger LOG = LoggerFactory.getLogger(Job4jUrlShortcutApplication.class.getSimpleName());
 

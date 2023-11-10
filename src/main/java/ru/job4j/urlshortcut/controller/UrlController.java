@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+//@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UrlController {
     private static final Logger LOG = LoggerFactory.getLogger(UrlController.class.getSimpleName());

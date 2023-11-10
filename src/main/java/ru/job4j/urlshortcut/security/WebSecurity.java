@@ -25,11 +25,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private SiteDetailsService siteDetailsService;
     private PasswordEncoder passwordEncoder;
+    private static final String REDIRECT = "/redirect/**";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers(
+                        "/v2/api-docs",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**" ,
+                        /*Probably not needed*/ "/swagger.json")
+                .permitAll()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.GET, REDIRECT).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))

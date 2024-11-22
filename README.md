@@ -8,7 +8,7 @@
 # job4j_url_shortcut
 Переход, по разделам описания проекта, можно осуществить нажав на соответсвующую иконку с выпадающем списком.<br>
 
-![](images/contents.jpg) <br>
+![](02_images/contents.jpg) <br>
 Рисунок 1. Оглавление <br>
 ## О проекте
 Чтобы обеспечить безопасность пользователей, все ссылки на сайте заменяются ссылками на наш сервис.<br>
@@ -62,7 +62,7 @@ C телом JSON объекта. <br>
 ```
 Флаг registration указывает, что регистрация выполнена или нет, то есть сайт уже есть в системе. <br>
 
-![](images/registration.jpg) <br>
+![](02_images/registration.jpg) <br>
 Рисунок 2. запрос на регистрацию и ответ со статусом 200 (выполнен удачно) <br>
 ### Авторизация.
 Авторизацию реализованна через JWT. Пользователь отправляет <br>
@@ -82,7 +82,7 @@ http://localhost:8080/login
 
 В дальнейшем, этот ключ направляеться в запросе в блоке HEAD. <br>
 
-![](images/login.jpg) <br>
+![](02_images/login.jpg) <br>
 Рисунок 3. запрос на авторизацию пользователя и ответ <br>
 
 Без авторизации доступны запросы: <br>
@@ -108,7 +108,7 @@ C телом JSON объекта:
   "code": "WJIjL"
 } 
 ```
-![](images/convert.jpg) <br> 
+![](02_images/convert.jpg) <br> 
 Рисунок 4. запрос на регистрацию ссылки и ответ со статусом 200 (выполнен удачно) <br>
 ### Переадресация.
 Когда сайт отправляет ссылку с кодом в ответ вернеться ассоциированный адрес и статус 302. <br>
@@ -123,7 +123,7 @@ HTTP CODE - 302 REDIRECT URL <br>
 {URL=https://job4j.ru/profile/exercise/106/task-view/531}
 ```
 
-![](images/redirect.jpg) <br>
+![](02_images/redirect.jpg) <br>
 Рисунок 5. запрос на Переадресацию и ответ со статусом 302 (перенаправление). <br>
 ### Статистика.
 В сервисе считается количество вызовов каждого адреса. <br>
@@ -141,7 +141,7 @@ http://localhost:8080/statistic
 }
 ```
 
-![](images/statistic.jpg) <br>
+![](02_images/statistic.jpg) <br>
 Рисунок 6. запрос/ответ статистика по ссылкам. <br>
 ### Документация swagger.
 В этом разделе содержится инструкция для доступа к описанию RESTful API спецификаций проекта, <br> 
@@ -161,7 +161,7 @@ http://localhost:8080/v2/api-docs <br>
 > раздел "definitions" - это схема обьектов модели проекта. Разверните поля этих обьектов, <br>
 > что бы посмотреть что необходимо отправить, что бы сделать вызовы  <br>
 
-![](images/jsondoc.jpg) <br>
+![](02_images/jsondoc.jpg) <br>
 Рисунок 7. Вызов JSON документации в программе POSTMAN. <br>
 
 Документация в формате HTML можно получить в браузере по адресу:
@@ -175,11 +175,63 @@ http://localhost:8080/swagger-ui.html
 Также можно сделать пробный вызов API, подерживаеться движком swagger.
 На рисунке 8 представлен пробный вызов API, не требующего авторизации 
 
-![](images/htmldoc.jpg) <br>
+![](02_images/htmldoc.jpg) <br>
 Рисунок 8. Вызов HTML документации с помощью swagger. <br>
 
-![](images/response.jpg) <br>
+![](02_images/response.jpg) <br>
 Рисунок 9. Успешный ответ, на вызов ссылки с кодом ресурса /redirect/WJIjL в swagger. <br>
 
 С помощью swagger можно делать вызовы API в своей документации.
 
+### Образы Docker.
+
+что бы запустить приложение необходима программа Docker Compose
+
+Проверяем наличие программы и, если её нет, устанавливаем.
+
+[Установка Docker Compose](https://github.com/IvanPavlovets/job4j_url_shortcut/blob/master/01_installation/INSTALLATION.md)
+
+_Примечание: Все команды выполняем в терминале Linux_<br>
+<br>
+Склонируйте проект:
+```
+git clone https://github.com/IvanPavlovets/job4j_url_shortcut.git
+```
+Перейдите в папку проекта:
+```
+cd job4j_url_shortcut
+```
+Выполните команду создание образов проекта:
+```
+docker-compose build
+```
+или запустите все образы проекта (предварительно, выполниться команда создания):
+```
+docker-compose up -d
+```
+выйти из каталога проекта
+```
+cd ..
+```
+Регистрация сайта: 
+```
+curl --location --request POST 'http://localhost:8080/registration' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "site": "Jobb.com"
+}'
+```
+Получение токена:
+
+```
+curl --location --request POST 'http://localhost:8080/login' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "login": "your_login",
+    "password": "your_password"
+}'
+```
+
+![](02_images/curl.jpg) <br>
+Рисунок 10. Демонстрация работы проекта, отправка запросов (Регистрация сайта, Получение токена) через curl, в терминале linux. <br>
